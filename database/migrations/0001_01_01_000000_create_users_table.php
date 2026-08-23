@@ -11,13 +11,38 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // Parent table: users
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('email')->unique();
+            $table->string('email')->nullable()->unique();
+            $table->string('password')->nullable();
             $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
             $table->rememberToken();
+            $table->timestamps();
+        });
+
+        // Child table: admins (one-to-one with users)
+        Schema::create('admins', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('user_id')->unique()->constrained('users')->cascadeOnDelete();
+            $table->string('role')->default('spa_admin'); // super_admin, spa_admin
+            $table->timestamps();
+        });
+
+        // Child table: clients (one-to-one with users)
+        Schema::create('clients', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('user_id')->unique()->constrained('users')->cascadeOnDelete();
+            $table->string('country_code')->nullable();
+            $table->string('phone_number')->nullable()->unique();
+            $table->string('registration_mode')->default('both'); // both, email_only, phone_only
+            $table->string('google_id')->nullable()->unique();
+            $table->timestamp('phone_verified_at')->nullable();
+            $table->string('email_otp')->nullable();
+            $table->timestamp('email_otp_expires_at')->nullable();
+            $table->string('phone_otp')->nullable();
+            $table->timestamp('phone_otp_expires_at')->nullable();
             $table->timestamps();
         });
 
@@ -42,8 +67,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
-        Schema::dropIfExists('password_reset_tokens');
         Schema::dropIfExists('sessions');
+        Schema::dropIfExists('password_reset_tokens');
+        Schema::dropIfExists('clients');
+        Schema::dropIfExists('admins');
+        Schema::dropIfExists('users');
     }
 };

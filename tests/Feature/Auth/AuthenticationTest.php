@@ -12,6 +12,9 @@ test('login screen can be rendered', function () {
 
 test('users can authenticate using the login screen', function () {
     $user = User::factory()->create();
+    \App\Models\Admin::factory()->create([
+        'user_id' => $user->id,
+    ]);
 
     $response = $this->post(route('login.store'), [
         'email' => $user->email,
