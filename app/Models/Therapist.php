@@ -32,6 +32,8 @@ use Illuminate\Support\Carbon;
  * @property-read \Illuminate\Database\Eloquent\Collection|Language[] $languages
  * @property-read \Illuminate\Database\Eloquent\Collection|Speciality[] $specialities
  * @property-read \Illuminate\Database\Eloquent\Collection|TherapistAvailability[] $availabilities
+ * @property-read \Illuminate\Database\Eloquent\Collection|TherapistServiceLog[] $serviceLogs
+ * @property-read \Illuminate\Database\Eloquent\Collection|ClientPayment[] $clientPayments
  */
 #[Fillable([
     'employee_id',
@@ -219,5 +221,76 @@ class Therapist extends Model
     public function availabilities(): HasMany
     {
         return $this->hasMany(TherapistAvailability::class);
+    }
+
+    /**
+     * Get daily service treatment logs where this therapist is the primary therapist.
+     */
+    public function serviceLogs(): HasMany
+    {
+        return $this->hasMany(TherapistServiceLog::class, 'therapist_id');
+    }
+
+    /**
+     * Get daily service treatment logs where this therapist performed as the 2nd therapist in a Dual / Couple massage.
+     */
+    public function secondaryServiceLogs(): HasMany
+    {
+        return $this->hasMany(TherapistServiceLog::class, 'secondary_therapist_id');
+    }
+
+    /**
+     * Query all service logs (both single primary and dual secondary sessions).
+     */
+    public function allServiceLogs()
+    {
+        return TherapistServiceLog::where(function ($q) {
+            $q->where('therapist_id', $this->id)
+                ->orWhere('secondary_therapist_id', $this->id);
+        });
+    }
+
+    /**
+     * Get client payment records linked to this therapist.
+     */
+    public function clientPayments(): HasMany
+    {
+        return $this->hasMany(ClientPayment::class);
+    }
+
+    /**
+     * Get all master employee daily attendance records for this therapist.
+     */
+    public function attendances(): HasMany
+    {
+        return $this->hasMany(EmployeeAttendance::class);
+    }
+
+    /**
+     * Get all dedicated therapist duty shift allocation attendance records.
+     */
+    public function therapistAttendances(): HasMany
+    {
+        return $this->hasMany(TherapistAttendance::class);
+    }
+
+    /**
+     * Check if therapist is marked present (full day or half day) today.
+     */
+    public function isPresentToday(?string $date = null): bool
+    {
+        $dateStr = $date ?? now()->toDateString();
+        return $this->attendances()
+            ->where('date', $dateStr)
+            ->whereIn('status', ['present', 'half_day'])
+            ->exists();
+    }
+
+    /**
+     * Get live availability status payload using TherapistScheduleService.
+     */
+    public function getLiveStatus(?Carbon $currentTime = null): array
+    {
+        return app(\App\Services\TherapistScheduleService::class)->getLiveStatus($this, $currentTime);
     }
 }

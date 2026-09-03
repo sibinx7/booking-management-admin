@@ -26,6 +26,19 @@ class ServiceReviewFactory extends Factory
             'comment' => fake()->paragraph(),
             'treatment_duration' => fake()->randomElement(['60 mins', '90 mins', '120 mins']),
             'verified_guest' => true,
+            'is_published' => true,
+            'published_at' => now(),
         ];
+    }
+
+    /**
+     * Indicate that the review is a draft.
+     */
+    public function draft(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'is_published' => false,
+            'published_at' => null,
+        ]);
     }
 }

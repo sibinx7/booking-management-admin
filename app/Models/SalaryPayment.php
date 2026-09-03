@@ -18,6 +18,16 @@ use Illuminate\Support\Carbon;
  * @property int $year
  * @property Carbon $period_start_date
  * @property Carbon $period_end_date
+ * @property int $total_working_days
+ * @property int $present_days
+ * @property int $absent_days
+ * @property int $leave_days
+ * @property float $base_salary_amount
+ * @property float $attendance_adjusted_base
+ * @property int $services_completed_count
+ * @property float $service_commission_amount
+ * @property float $bonus_amount
+ * @property float $deduction_amount
  * @property float $amount
  * @property Carbon $payment_date
  * @property Carbon|null $deposited_date
@@ -40,6 +50,16 @@ use Illuminate\Support\Carbon;
     'year',
     'period_start_date',
     'period_end_date',
+    'total_working_days',
+    'present_days',
+    'absent_days',
+    'leave_days',
+    'base_salary_amount',
+    'attendance_adjusted_base',
+    'services_completed_count',
+    'service_commission_amount',
+    'bonus_amount',
+    'deduction_amount',
     'amount',
     'payment_date',
     'deposited_date',
@@ -65,7 +85,17 @@ class SalaryPayment extends Model
             'year' => 'integer',
             'period_start_date' => 'date',
             'period_end_date' => 'date',
-            'amount' => 'float',
+            'total_working_days' => 'integer',
+            'present_days' => 'integer',
+            'absent_days' => 'integer',
+            'leave_days' => 'integer',
+            'base_salary_amount' => 'decimal:2',
+            'attendance_adjusted_base' => 'decimal:2',
+            'services_completed_count' => 'integer',
+            'service_commission_amount' => 'decimal:2',
+            'bonus_amount' => 'decimal:2',
+            'deduction_amount' => 'decimal:2',
+            'amount' => 'decimal:2',
             'payment_date' => 'date',
             'deposited_date' => 'date',
         ];

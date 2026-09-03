@@ -91,6 +91,8 @@ return new class extends Migration
             $table->text('comment');
             $table->string('treatment_duration')->nullable();
             $table->boolean('verified_guest')->default(true);
+            $table->boolean('is_published')->default(false);
+            $table->timestamp('published_at')->nullable();
             $table->timestamps();
         });
     }

@@ -20,7 +20,28 @@ return new class extends Migration
             $table->unsignedSmallInteger('year'); // e.g. 2026
             $table->date('period_start_date'); // e.g. 2026-08-01
             $table->date('period_end_date'); // e.g. 2026-08-31
-            $table->decimal('amount', 10, 2);
+            
+            // Attendance Metrics
+            $table->unsignedSmallInteger('total_working_days')->default(30);
+            $table->unsignedSmallInteger('present_days')->default(30);
+            $table->unsignedSmallInteger('absent_days')->default(0);
+            $table->unsignedSmallInteger('leave_days')->default(0);
+            
+            // Base Salary & Attendance Breakdown
+            $table->decimal('base_salary_amount', 10, 2)->default(0.00);
+            $table->decimal('attendance_adjusted_base', 10, 2)->default(0.00);
+            
+            // Therapist Performance Commission
+            $table->unsignedInteger('services_completed_count')->default(0);
+            $table->decimal('service_commission_amount', 10, 2)->default(0.00);
+            
+            // Adjustments
+            $table->decimal('bonus_amount', 10, 2)->default(0.00);
+            $table->decimal('deduction_amount', 10, 2)->default(0.00);
+            
+            // Total Net Salary
+            $table->decimal('amount', 10, 2); // Net payable payout
+            
             $table->date('payment_date');
             $table->date('deposited_date')->nullable();
             $table->string('status')->default('deposited'); // pending, deposited, failed, cancelled

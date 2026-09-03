@@ -39,6 +39,8 @@ use Illuminate\Support\Carbon;
  * @property-read User $user
  * @property-read SalaryGrade|null $salaryGrade
  * @property-read Therapist|null $therapist
+ * @property-read Receptionist|null $receptionist
+ * @property-read EmployeeAttendance[] $attendances
  * @property-read \Illuminate\Database\Eloquent\Collection|SalaryPayment[] $salaryPayments
  * @property-read \Illuminate\Database\Eloquent\Collection|SalaryIncrement[] $salaryIncrements
  */
@@ -243,6 +245,22 @@ class Employee extends Model
     public function therapist(): HasOne
     {
         return $this->hasOne(Therapist::class);
+    }
+
+    /**
+     * Get the receptionist profile if this employee is a receptionist.
+     */
+    public function receptionist(): HasOne
+    {
+        return $this->hasOne(Receptionist::class);
+    }
+
+    /**
+     * Get all daily attendance records for this employee.
+     */
+    public function attendances(): HasMany
+    {
+        return $this->hasMany(EmployeeAttendance::class);
     }
 
     /**

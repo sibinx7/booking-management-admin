@@ -28,7 +28,7 @@ class SalaryPaymentFactory extends Factory
 
         return [
             'employee_id' => Employee::factory(),
-            'payment_type_id' => PaymentType::factory()->bank(),
+            'payment_type_id' => PaymentType::firstOrCreate(['code' => 'bank'], ['name' => 'Bank Transfer', 'description' => 'Bank transfer', 'is_active' => true])->id,
             'payslip_number' => sprintf('PAY-%d-%02d-%s', $year, $month, fake()->unique()->numerify('####')),
             'month' => $month,
             'year' => $year,
