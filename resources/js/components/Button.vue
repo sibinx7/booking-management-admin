@@ -37,7 +37,12 @@ withDefaults(
         :disabled="disabled"
         v-bind="$attrs"
         rounded="lg"
-        class="text-none font-weight-medium"
+        :class="[
+            (color === 'primary' || color === 'info' || color === 'error' || color === 'success') && (variant === 'elevated' || variant === 'flat' || !variant)
+                ? 'text-white'
+                : '',
+            'text-none font-weight-medium',
+        ]"
     >
         <template v-for="(_, name) in $slots" #[name]="slotData">
             <slot :name="name" v-bind="slotData || {}" />

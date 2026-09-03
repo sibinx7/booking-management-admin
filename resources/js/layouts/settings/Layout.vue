@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Link } from '@inertiajs/vue3';
+import { Card } from '@/components';
 import { useCurrentUrl } from '@/composables/useCurrentUrl';
 import { toUrl } from '@/lib/utils';
 import { edit as editAppearance } from '@/routes/appearance';
@@ -31,8 +31,8 @@ const { isCurrentOrParentUrl } = useCurrentUrl();
 <template>
     <div>
         <div class="mb-6">
-            <h1 class="text-h5 font-weight-bold text-grey-darken-3 mb-1">Settings</h1>
-            <p class="text-body-2 text-grey-darken-1 mb-0">Manage your profile and account settings</p>
+            <h1 class="text-h5 font-weight-bold mb-1">Settings</h1>
+            <p class="text-body-2 text-medium-emphasis mb-0">Manage your profile and account settings</p>
         </div>
 
         <v-divider class="mb-6" />
@@ -58,9 +58,9 @@ const { isCurrentOrParentUrl } = useCurrentUrl();
             </v-col>
 
             <v-col cols="12" md="9">
-                <v-card elevation="1" rounded="lg" class="pa-6 bg-white">
+                <Card elevation="1" class="pa-6">
                     <slot />
-                </v-card>
+                </Card>
             </v-col>
         </v-row>
     </div>

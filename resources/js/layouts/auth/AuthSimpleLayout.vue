@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
+import { Card } from '@/components';
 import { home } from '@/routes';
 
 defineProps<{
@@ -9,7 +10,7 @@ defineProps<{
 </script>
 
 <template>
-    <v-app class="bg-grey-lighten-4">
+    <v-app>
         <v-main class="d-flex align-center justify-center min-vh-100 py-10">
             <v-container>
                 <v-row justify="center">
@@ -20,17 +21,17 @@ defineProps<{
                                     <v-icon icon="mdi-spa" size="32" color="white" />
                                 </v-avatar>
                             </Link>
-                            <h2 v-if="title" class="text-h5 font-weight-bold text-grey-darken-3 mb-1">
+                            <h2 v-if="title" class="text-h5 font-weight-bold mb-1">
                                 {{ title }}
                             </h2>
-                            <p v-if="description" class="text-body-2 text-grey-darken-1 mb-0">
+                            <p v-if="description" class="text-body-2 text-medium-emphasis mb-0">
                                 {{ description }}
                             </p>
                         </div>
 
-                        <v-card elevation="2" rounded="lg" class="pa-6 pa-sm-8 bg-white">
+                        <Card elevation="3" class="pa-6 pa-sm-8">
                             <slot />
-                        </v-card>
+                        </Card>
                     </v-col>
                 </v-row>
             </v-container>

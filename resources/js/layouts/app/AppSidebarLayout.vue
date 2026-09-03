@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Link, usePage } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
+import { useAppearance } from '@/composables/useAppearance';
 import { dashboard, logout } from '@/routes';
 import { edit as editProfile } from '@/routes/profile';
 import type { BreadcrumbItem } from '@/types';
@@ -16,21 +17,26 @@ withDefaults(defineProps<Props>(), {
 const drawer = ref(true);
 const page = usePage();
 const user = computed(() => page.props.auth?.user);
+const { appearance, updateAppearance } = useAppearance();
+
+const toggleDark = () => {
+    updateAppearance(appearance.value === 'dark' ? 'light' : 'dark');
+};
 </script>
 
 <template>
-    <v-app class="bg-grey-lighten-4">
+    <v-app>
         <!-- Navigation Drawer -->
-        <v-navigation-drawer v-model="drawer" elevation="1" color="surface">
+        <v-navigation-drawer v-model="drawer" elevation="1">
             <div class="pa-4 d-flex align-center">
                 <v-avatar color="primary" size="40" class="mr-3 elevation-1">
                     <v-icon icon="mdi-spa" color="white" size="24" />
                 </v-avatar>
                 <div>
-                    <div class="text-subtitle-1 font-weight-bold text-grey-darken-3 leading-tight">
+                    <div class="text-subtitle-1 font-weight-bold leading-tight">
                         Spa Admin
                     </div>
-                    <div class="text-caption text-grey-darken-1">Management Portal</div>
+                    <div class="text-caption text-medium-emphasis">Management Portal</div>
                 </div>
             </div>
 
@@ -46,7 +52,7 @@ const user = computed(() => page.props.auth?.user);
                     rounded="lg"
                 />
 
-                <v-list-subheader class="font-weight-bold text-uppercase text-caption text-grey">
+                <v-list-subheader class="font-weight-bold text-uppercase text-caption text-medium-emphasis">
                     Operations
                 </v-list-subheader>
 
@@ -74,7 +80,7 @@ const user = computed(() => page.props.auth?.user);
                     rounded="lg"
                 />
 
-                <v-list-subheader class="font-weight-bold text-uppercase text-caption text-grey">
+                <v-list-subheader class="font-weight-bold text-uppercase text-caption text-medium-emphasis">
                     Account
                 </v-list-subheader>
 
@@ -107,14 +113,14 @@ const user = computed(() => page.props.auth?.user);
         </v-navigation-drawer>
 
         <!-- App Bar -->
-        <v-app-bar elevation="0" color="surface" class="border-b">
+        <v-app-bar elevation="0" class="border-b">
             <v-app-bar-nav-icon @click="drawer = !drawer" />
 
             <v-app-bar-title class="text-subtitle-1 font-weight-medium">
                 <template v-if="breadcrumbs.length">
                     <span v-for="(crumb, idx) in breadcrumbs" :key="idx">
-                        <span v-if="idx > 0" class="mx-2 text-grey">/</span>
-                        <span :class="{ 'text-grey': idx < breadcrumbs.length - 1, 'font-weight-bold': idx === breadcrumbs.length - 1 }">
+                        <span v-if="idx > 0" class="mx-2 text-medium-emphasis">/</span>
+                        <span :class="{ 'text-medium-emphasis': idx < breadcrumbs.length - 1, 'font-weight-bold': idx === breadcrumbs.length - 1 }">
                             {{ crumb.title }}
                         </span>
                     </span>
@@ -125,6 +131,17 @@ const user = computed(() => page.props.auth?.user);
             </v-app-bar-title>
 
             <v-spacer />
+
+            <!-- Dark Mode Quick Toggle -->
+            <v-btn
+                icon
+                variant="text"
+                @click="toggleDark"
+                class="mr-2"
+                :title="appearance === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'"
+            >
+                <v-icon :icon="appearance === 'dark' ? 'mdi-white-balance-sunny' : 'mdi-weather-night'" />
+            </v-btn>
 
             <!-- User Menu -->
             <v-menu location="bottom end">
