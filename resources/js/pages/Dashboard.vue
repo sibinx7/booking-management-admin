@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
-import PlaceholderPattern from '@/components/PlaceholderPattern.vue';
 import { dashboard } from '@/routes';
 
 defineOptions({
@@ -8,7 +7,7 @@ defineOptions({
         breadcrumbs: [
             {
                 title: 'Dashboard',
-                href: dashboard(),
+                href: dashboard.url(),
             },
         ],
     },
@@ -18,30 +17,72 @@ defineOptions({
 <template>
     <Head title="Dashboard" />
 
-    <div
-        class="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4"
-    >
-        <div class="grid auto-rows-min gap-4 md:grid-cols-3">
-            <div
-                class="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border"
-            >
-                <PlaceholderPattern />
-            </div>
-            <div
-                class="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border"
-            >
-                <PlaceholderPattern />
-            </div>
-            <div
-                class="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border"
-            >
-                <PlaceholderPattern />
-            </div>
+    <div>
+        <div class="mb-6">
+            <h1 class="text-h5 font-weight-bold text-grey-darken-3 mb-1">Spa Overview</h1>
+            <p class="text-body-2 text-grey-darken-1 mb-0">Welcome to your spa management control center</p>
         </div>
-        <div
-            class="relative min-h-[100vh] flex-1 rounded-xl border border-sidebar-border/70 md:min-h-min dark:border-sidebar-border"
-        >
-            <PlaceholderPattern />
-        </div>
+
+        <v-row>
+            <v-col cols="12" sm="6" md="3">
+                <v-card elevation="1" rounded="lg" class="pa-4 bg-white">
+                    <div class="d-flex align-center justify-space-between mb-2">
+                        <span class="text-caption font-weight-bold text-grey text-uppercase">Employees</span>
+                        <v-avatar color="primary" variant="tonal" size="36">
+                            <v-icon icon="mdi-account-group-outline" size="20" />
+                        </v-avatar>
+                    </div>
+                    <div class="text-h4 font-weight-bold text-grey-darken-3">12</div>
+                    <div class="text-caption text-success font-weight-medium mt-1">
+                        Active staff members
+                    </div>
+                </v-card>
+            </v-col>
+
+            <v-col cols="12" sm="6" md="3">
+                <v-card elevation="1" rounded="lg" class="pa-4 bg-white">
+                    <div class="d-flex align-center justify-space-between mb-2">
+                        <span class="text-caption font-weight-bold text-grey text-uppercase">Therapists</span>
+                        <v-avatar color="secondary" variant="tonal" size="36">
+                            <v-icon icon="mdi-account-heart-outline" size="20" />
+                        </v-avatar>
+                    </div>
+                    <div class="text-h4 font-weight-bold text-grey-darken-3">8</div>
+                    <div class="text-caption text-secondary font-weight-medium mt-1">
+                        On duty & available
+                    </div>
+                </v-card>
+            </v-col>
+
+            <v-col cols="12" sm="6" md="3">
+                <v-card elevation="1" rounded="lg" class="pa-4 bg-white">
+                    <div class="d-flex align-center justify-space-between mb-2">
+                        <span class="text-caption font-weight-bold text-grey text-uppercase">Salary Payouts</span>
+                        <v-avatar color="success" variant="tonal" size="36">
+                            <v-icon icon="mdi-cash-check" size="20" />
+                        </v-avatar>
+                    </div>
+                    <div class="text-h4 font-weight-bold text-grey-darken-3">₹ 3.2L</div>
+                    <div class="text-caption text-grey font-weight-medium mt-1">
+                        Processed this cycle
+                    </div>
+                </v-card>
+            </v-col>
+
+            <v-col cols="12" sm="6" md="3">
+                <v-card elevation="1" rounded="lg" class="pa-4 bg-white">
+                    <div class="d-flex align-center justify-space-between mb-2">
+                        <span class="text-caption font-weight-bold text-grey text-uppercase">Spa Services</span>
+                        <v-avatar color="accent" variant="tonal" size="36">
+                            <v-icon icon="mdi-spa" size="20" />
+                        </v-avatar>
+                    </div>
+                    <div class="text-h4 font-weight-bold text-grey-darken-3">15</div>
+                    <div class="text-caption text-grey font-weight-medium mt-1">
+                        Active treatments
+                    </div>
+                </v-card>
+            </v-col>
+        </v-row>
     </div>
 </template>

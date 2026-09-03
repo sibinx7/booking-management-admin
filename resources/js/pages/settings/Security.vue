@@ -1,103 +1,93 @@
 <script setup lang="ts">
-import { Form, Head } from '@inertiajs/vue3';
-import SecurityController from '@/actions/App/Http/Controllers/Settings/SecurityController';
-import Heading from '@/components/Heading.vue';
-import InputError from '@/components/InputError.vue';
-import PasswordInput from '@/components/PasswordInput.vue';
-import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
-import { edit } from '@/routes/security';
+import { Head, useForm } from '@inertiajs/vue3';
+import { ref } from 'vue';
+import { Button, Heading, Input } from '@/components';
+import { edit as editSecurity } from '@/routes/security';
 
-type Props = {
-    passwordRules: string;
-};
-
-const props = defineProps<Props>();
+defineProps<{
+    passwordRules?: string;
+}>();
 
 defineOptions({
     layout: {
         breadcrumbs: [
             {
                 title: 'Security settings',
-                href: edit(),
+                href: editSecurity(),
             },
         ],
     },
 });
+
+const form = useForm({
+    current_password: '',
+    password: '',
+    password_confirmation: '',
+});
+
+const showCurrentPassword = ref(false);
+const showNewPassword = ref(false);
+
+const submit = () => {
+    form.put('/user/password', {
+        preserveScroll: true,
+        onSuccess: () => form.reset(),
+    });
+};
 </script>
 
 <template>
     <Head title="Security settings" />
 
-    <h1 class="sr-only">Security settings</h1>
+    <Heading
+        title="Update Password"
+        description="Ensure your account is using a long, random password to stay secure"
+        variant="small"
+    />
 
-    <div class="space-y-6">
-        <Heading
-            variant="small"
-            title="Update password"
-            description="Ensure your account is using a long, random password to stay secure"
+    <form @submit.prevent="submit" class="max-w-lg">
+        <Input
+            v-model="form.current_password"
+            label="Current Password"
+            :type="showCurrentPassword ? 'text' : 'password'"
+            prepend-inner-icon="mdi-lock-outline"
+            :append-inner-icon="showCurrentPassword ? 'mdi-eye-off' : 'mdi-eye'"
+            @click:append-inner="showCurrentPassword = !showCurrentPassword"
+            :error-messages="form.errors.current_password"
+            class="mb-3"
+            autocomplete="current-password"
+            required
         />
 
-        <Form
-            v-bind="SecurityController.update.form()"
-            :options="{
-                preserveScroll: true,
-            }"
-            reset-on-success
-            :reset-on-error="[
-                'password',
-                'password_confirmation',
-                'current_password',
-            ]"
-            class="space-y-6"
-            v-slot="{ errors, processing }"
+        <Input
+            v-model="form.password"
+            label="New Password"
+            :type="showNewPassword ? 'text' : 'password'"
+            prepend-inner-icon="mdi-lock-reset"
+            :append-inner-icon="showNewPassword ? 'mdi-eye-off' : 'mdi-eye'"
+            @click:append-inner="showNewPassword = !showNewPassword"
+            :error-messages="form.errors.password"
+            class="mb-3"
+            autocomplete="new-password"
+            required
+        />
+
+        <Input
+            v-model="form.password_confirmation"
+            label="Confirm Password"
+            :type="showNewPassword ? 'text' : 'password'"
+            prepend-inner-icon="mdi-lock-check-outline"
+            :error-messages="form.errors.password_confirmation"
+            class="mb-4"
+            autocomplete="new-password"
+            required
+        />
+
+        <Button
+            type="submit"
+            :loading="form.processing"
         >
-            <div class="grid gap-2">
-                <Label for="current_password">Current password</Label>
-                <PasswordInput
-                    id="current_password"
-                    name="current_password"
-                    class="mt-1 block w-full"
-                    autocomplete="current-password"
-                    placeholder="Current password"
-                />
-                <InputError :message="errors.current_password" />
-            </div>
-
-            <div class="grid gap-2">
-                <Label for="password">New password</Label>
-                <PasswordInput
-                    id="password"
-                    name="password"
-                    class="mt-1 block w-full"
-                    autocomplete="new-password"
-                    placeholder="New password"
-                    :passwordrules="props.passwordRules"
-                />
-                <InputError :message="errors.password" />
-            </div>
-
-            <div class="grid gap-2">
-                <Label for="password_confirmation">Confirm password</Label>
-                <PasswordInput
-                    id="password_confirmation"
-                    name="password_confirmation"
-                    class="mt-1 block w-full"
-                    autocomplete="new-password"
-                    placeholder="Confirm password"
-                    :passwordrules="props.passwordRules"
-                />
-                <InputError :message="errors.password_confirmation" />
-            </div>
-
-            <div class="flex items-center gap-4">
-                <Button
-                    :disabled="processing"
-                    data-test="update-password-button"
-                >
-                    Save
-                </Button>
-            </div>
-        </Form>
-    </div>
+            Update Password
+        </Button>
+    </form>
 </template>

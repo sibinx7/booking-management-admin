@@ -1,101 +1,94 @@
 <script setup lang="ts">
-import { Form, Head } from '@inertiajs/vue3';
-import InputError from '@/components/InputError.vue';
-import PasswordInput from '@/components/PasswordInput.vue';
-import TextLink from '@/components/TextLink.vue';
-import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Spinner } from '@/components/ui/spinner';
-import { store } from '@/routes/login';
+import { Head, Link, useForm } from '@inertiajs/vue3';
+import { ref } from 'vue';
+import { Alert, Button, Checkbox, Input } from '@/components';
+import { login } from '@/routes';
 import { request } from '@/routes/password';
 
 defineOptions({
     layout: {
-        title: 'Log in to your account',
-        description: 'Enter your email and password below to log in',
+        title: 'Sign in to Spa Admin',
+        description: 'Enter your email and password to access your dashboard',
     },
 });
 
 defineProps<{
     status?: string;
-    canResetPassword: boolean;
 }>();
+
+const form = useForm({
+    email: '',
+    password: '',
+    remember: false,
+});
+
+const showPassword = ref(false);
+
+const submit = () => {
+    form.post(login.url(), {
+        onFinish: () => form.reset('password'),
+    });
+};
 </script>
 
 <template>
     <Head title="Log in" />
 
-    <div
+    <Alert
         v-if="status"
-        class="mb-4 text-center text-sm font-medium text-green-600"
-    >
-        {{ status }}
-    </div>
+        type="success"
+        class="mb-4"
+        :text="status"
+    />
 
-    <Form
-        v-bind="store.form()"
-        :reset-on-success="['password']"
-        v-slot="{ errors, processing }"
-        class="flex flex-col gap-6"
-    >
-        <div class="grid gap-6">
-            <div class="grid gap-2">
-                <Label for="email">Email address</Label>
-                <Input
-                    id="email"
-                    type="email"
-                    name="email"
-                    required
-                    autofocus
-                    :tabindex="1"
-                    autocomplete="email"
-                    placeholder="email@example.com"
-                />
-                <InputError :message="errors.email" />
-            </div>
+    <form @submit.prevent="submit">
+        <Input
+            v-model="form.email"
+            label="Email address"
+            type="email"
+            placeholder="name@example.com"
+            prepend-inner-icon="mdi-email-outline"
+            :error-messages="form.errors.email"
+            class="mb-3"
+            autocomplete="username"
+            required
+        />
 
-            <div class="grid gap-2">
-                <div class="flex items-center justify-between">
-                    <Label for="password">Password</Label>
-                    <TextLink
-                        v-if="canResetPassword"
-                        :href="request()"
-                        class="text-sm"
-                        :tabindex="5"
-                    >
-                        Forgot your password?
-                    </TextLink>
-                </div>
-                <PasswordInput
-                    id="password"
-                    name="password"
-                    required
-                    :tabindex="2"
-                    autocomplete="current-password"
-                    placeholder="Password"
-                />
-                <InputError :message="errors.password" />
-            </div>
+        <Input
+            v-model="form.password"
+            label="Password"
+            :type="showPassword ? 'text' : 'password'"
+            placeholder="••••••••"
+            prepend-inner-icon="mdi-lock-outline"
+            :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
+            @click:append-inner="showPassword = !showPassword"
+            :error-messages="form.errors.password"
+            class="mb-1"
+            autocomplete="current-password"
+            required
+        />
 
-            <div class="flex items-center justify-between">
-                <Label for="remember" class="flex items-center space-x-3">
-                    <Checkbox id="remember" name="remember" :tabindex="3" />
-                    <span>Remember me</span>
-                </Label>
-            </div>
+        <div class="d-flex align-center justify-space-between mb-6">
+            <Checkbox
+                v-model="form.remember"
+                label="Remember me"
+            />
 
-            <Button
-                type="submit"
-                class="mt-4 w-full"
-                :tabindex="4"
-                :disabled="processing"
-                data-test="login-button"
+            <Link
+                :href="request()"
+                class="text-caption text-primary font-weight-medium text-decoration-none"
             >
-                <Spinner v-if="processing" />
-                Log in
-            </Button>
+                Forgot password?
+            </Link>
         </div>
-    </Form>
+
+        <Button
+            type="submit"
+            block
+            size="large"
+            :loading="form.processing"
+        >
+            Log in
+        </Button>
+    </form>
 </template>

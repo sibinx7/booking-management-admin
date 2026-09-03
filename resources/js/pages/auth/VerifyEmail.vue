@@ -1,47 +1,58 @@
 <script setup lang="ts">
-import { Form, Head } from '@inertiajs/vue3';
-import TextLink from '@/components/TextLink.vue';
-import { Button } from '@/components/ui/button';
-import { Spinner } from '@/components/ui/spinner';
+import { Head, Link, useForm } from '@inertiajs/vue3';
+import { Alert, Button } from '@/components';
 import { logout } from '@/routes';
 import { send } from '@/routes/verification';
 
 defineOptions({
     layout: {
-        title: 'Email verification',
+        title: 'Verify your email',
         description:
-            'Please verify your email address by clicking on the link we just emailed to you.',
+            'Please verify your email address by clicking on the link we sent to your inbox',
     },
 });
 
 defineProps<{
     status?: string;
 }>();
+
+const form = useForm({});
+
+const submit = () => {
+    form.post(send.url());
+};
 </script>
 
 <template>
     <Head title="Email verification" />
 
-    <div
+    <Alert
         v-if="status === 'verification-link-sent'"
-        class="mb-4 text-center text-sm font-medium text-green-600"
-    >
-        A new verification link has been sent to the email address you provided
-        during registration.
-    </div>
+        type="success"
+        class="mb-4"
+        text="A new verification link has been sent to your email address."
+    />
 
-    <Form
-        v-bind="send.form()"
-        class="space-y-6 text-center"
-        v-slot="{ processing }"
-    >
-        <Button :disabled="processing" variant="secondary">
-            <Spinner v-if="processing" />
+    <form @submit.prevent="submit">
+        <Button
+            type="submit"
+            block
+            size="large"
+            :loading="form.processing"
+            class="mb-4"
+        >
             Resend verification email
         </Button>
 
-        <TextLink :href="logout()" as="button" class="mx-auto block text-sm">
-            Log out
-        </TextLink>
-    </Form>
+        <div class="text-center">
+            <Link
+                :href="logout.url()"
+                method="post"
+                as="button"
+                class="text-body-2 text-grey-darken-1 text-decoration-none"
+            >
+                Log out
+            </Link>
+        </div>
+    </form>
 </template>

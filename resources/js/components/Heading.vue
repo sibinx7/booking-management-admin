@@ -1,28 +1,28 @@
 <script setup lang="ts">
-type Props = {
-    title: string;
-    description?: string;
-    variant?: 'default' | 'small';
-};
-
-withDefaults(defineProps<Props>(), {
-    variant: 'default',
-});
+withDefaults(
+    defineProps<{
+        title: string;
+        description?: string;
+        variant?: 'large' | 'small';
+    }>(),
+    {
+        variant: 'large',
+    },
+);
 </script>
 
 <template>
-    <header :class="variant === 'small' ? '' : 'mb-8 space-y-0.5'">
-        <h2
-            :class="
-                variant === 'small'
-                    ? 'mb-0.5 text-base font-medium'
-                    : 'text-xl font-semibold tracking-tight'
-            "
+    <div class="mb-6">
+        <h1
+            :class="[
+                variant === 'large' ? 'text-h5' : 'text-h6',
+                'font-weight-bold text-grey-darken-3 mb-1',
+            ]"
         >
             {{ title }}
-        </h2>
-        <p v-if="description" class="text-sm text-muted-foreground">
+        </h1>
+        <p v-if="description" class="text-body-2 text-grey-darken-1 mb-0">
             {{ description }}
         </p>
-    </header>
+    </div>
 </template>

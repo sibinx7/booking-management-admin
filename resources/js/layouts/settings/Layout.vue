@@ -1,8 +1,5 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
-import Heading from '@/components/Heading.vue';
-import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
 import { useCurrentUrl } from '@/composables/useCurrentUrl';
 import { toUrl } from '@/lib/utils';
 import { edit as editAppearance } from '@/routes/appearance';
@@ -14,14 +11,17 @@ const sidebarNavItems: NavItem[] = [
     {
         title: 'Profile',
         href: editProfile(),
+        icon: 'mdi-account-outline',
     },
     {
         title: 'Security',
         href: editSecurity(),
+        icon: 'mdi-shield-lock-outline',
     },
     {
         title: 'Appearance',
         href: editAppearance(),
+        icon: 'mdi-palette-outline',
     },
 ];
 
@@ -29,43 +29,39 @@ const { isCurrentOrParentUrl } = useCurrentUrl();
 </script>
 
 <template>
-    <div class="px-4 py-6">
-        <Heading
-            title="Settings"
-            description="Manage your profile and account settings"
-        />
+    <div>
+        <div class="mb-6">
+            <h1 class="text-h5 font-weight-bold text-grey-darken-3 mb-1">Settings</h1>
+            <p class="text-body-2 text-grey-darken-1 mb-0">Manage your profile and account settings</p>
+        </div>
 
-        <div class="flex flex-col lg:flex-row lg:space-x-12">
-            <aside class="w-full max-w-xl lg:w-48">
-                <nav
-                    class="flex flex-col space-y-1 space-x-0"
-                    aria-label="Settings"
-                >
-                    <Button
+        <v-divider class="mb-6" />
+
+        <v-row>
+            <v-col cols="12" md="3">
+                <v-list density="comfortable" nav class="pa-0 bg-transparent">
+                    <v-list-item
                         v-for="item in sidebarNavItems"
                         :key="toUrl(item.href)"
-                        variant="ghost"
-                        :class="[
-                            'w-full justify-start',
-                            { 'bg-muted': isCurrentOrParentUrl(item.href) },
-                        ]"
-                        as-child
+                        :to="toUrl(item.href)"
+                        :active="isCurrentOrParentUrl(item.href)"
+                        color="primary"
+                        rounded="lg"
+                        class="mb-1"
                     >
-                        <Link :href="item.href">
-                            <component :is="item.icon" class="h-4 w-4" />
-                            {{ item.title }}
-                        </Link>
-                    </Button>
-                </nav>
-            </aside>
+                        <template #prepend>
+                            <v-icon :icon="item.icon as string" class="mr-2" />
+                        </template>
+                        <v-list-item-title>{{ item.title }}</v-list-item-title>
+                    </v-list-item>
+                </v-list>
+            </v-col>
 
-            <Separator class="my-6 lg:hidden" />
-
-            <div class="flex-1 md:max-w-2xl">
-                <section class="max-w-xl space-y-12">
+            <v-col cols="12" md="9">
+                <v-card elevation="1" rounded="lg" class="pa-6 bg-white">
                     <slot />
-                </section>
-            </div>
-        </div>
+                </v-card>
+            </v-col>
+        </v-row>
     </div>
 </template>
