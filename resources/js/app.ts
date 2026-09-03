@@ -1,9 +1,12 @@
 import { createInertiaApp } from '@inertiajs/vue3';
+import { createApp, h } from 'vue';
 import { initializeTheme } from '@/composables/useAppearance';
 import AppLayout from '@/layouts/AppLayout.vue';
 import AuthLayout from '@/layouts/AuthLayout.vue';
 import SettingsLayout from '@/layouts/settings/Layout.vue';
 import { initializeFlashToast } from '@/lib/flashToast';
+import { pinia } from '@/plugins/pinia';
+import { vuetify } from '@/plugins/vuetify';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
@@ -21,8 +24,15 @@ createInertiaApp({
                 return AppLayout;
         }
     },
+    setup({ el, App, props, plugin }) {
+        createApp({ render: () => h(App, props) })
+            .use(plugin)
+            .use(pinia)
+            .use(vuetify)
+            .mount(el);
+    },
     progress: {
-        color: '#4B5563',
+        color: '#6366F1',
     },
 });
 

@@ -5,6 +5,7 @@ import vue from '@vitejs/plugin-vue';
 import laravel from 'laravel-vite-plugin';
 import { bunny } from 'laravel-vite-plugin/fonts';
 import { defineConfig } from 'vite';
+import vuetify from 'vite-plugin-vuetify';
 
 export default defineConfig({
     plugins: [
@@ -26,6 +27,9 @@ export default defineConfig({
                     includeAbsolute: false,
                 },
             },
+        }),
+        vuetify({
+            autoImport: true,
         }),
         wayfinder({
             formVariants: true,
