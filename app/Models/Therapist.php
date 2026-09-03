@@ -13,24 +13,19 @@ use Illuminate\Support\Carbon;
 
 /**
  * @property int $id
- * @property int|null $user_id
- * @property string $name
+ * @property int $employee_id
+ * @property string|null $display_name
  * @property string|null $profile_pic
- * @property Carbon|null $dob
- * @property string $gender
  * @property string|null $bio
- * @property string|null $phone_number
- * @property string|null $email
  * @property array|null $education
- * @property bool $is_active
  * @property bool $is_online
  * @property float $commission_rate
- * @property string|null $payment_info
  * @property float $rating
  * @property int $review_count
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * 
+ * @property-read Employee $employee
  * @property-read User|null $user
  * @property-read \Illuminate\Database\Eloquent\Collection|Service[] $services
  * @property-read \Illuminate\Database\Eloquent\Collection|Skill[] $skills
@@ -39,19 +34,13 @@ use Illuminate\Support\Carbon;
  * @property-read \Illuminate\Database\Eloquent\Collection|TherapistAvailability[] $availabilities
  */
 #[Fillable([
-    'user_id',
-    'name',
+    'employee_id',
+    'display_name',
     'profile_pic',
-    'dob',
-    'gender',
     'bio',
-    'phone_number',
-    'email',
     'education',
-    'is_active',
     'is_online',
     'commission_rate',
-    'payment_info',
     'rating',
     'review_count',
 ])]
@@ -61,6 +50,22 @@ class Therapist extends Model
     use HasFactory;
 
     /**
+     * The accessors to append to the model's array and JSON form (for Spa Service pages & APIs).
+     *
+     * @var array<int, string>
+     */
+    protected $appends = [
+        'name',
+        'email',
+        'phone_number',
+        'gender',
+        'dob',
+        'profile_pic',
+        'is_active',
+        'age',
+    ];
+
+    /**
      * Get the attributes that should be cast.
      *
      * @return array<string, string>
@@ -68,9 +73,7 @@ class Therapist extends Model
     protected function casts(): array
     {
         return [
-            'dob' => 'date',
             'education' => 'array',
-            'is_active' => 'boolean',
             'is_online' => 'boolean',
             'commission_rate' => 'float',
             'rating' => 'float',
@@ -79,15 +82,67 @@ class Therapist extends Model
     }
 
     /**
+     * Get the therapist's name (display_name or from parent employee/user).
+     */
+    public function getNameAttribute(): ?string
+    {
+        return $this->display_name ?: $this->employee?->name;
+    }
+
+    /**
+     * Get the therapist's email (from parent employee/user).
+     */
+    public function getEmailAttribute(): ?string
+    {
+        return $this->employee?->email;
+    }
+
+    /**
+     * Get the therapist's phone number (from parent employee).
+     */
+    public function getPhoneNumberAttribute(): ?string
+    {
+        return $this->employee?->phone_number;
+    }
+
+    /**
+     * Get the therapist's gender (from parent employee).
+     */
+    public function getGenderAttribute(): ?string
+    {
+        return $this->employee?->gender;
+    }
+
+    /**
+     * Get the therapist's date of birth (from parent employee).
+     */
+    public function getDobAttribute(): ?Carbon
+    {
+        return $this->employee?->dob;
+    }
+
+    /**
+     * Get the therapist's profile pic (custom showcase photo or from employee).
+     */
+    public function getProfilePicAttribute(): ?string
+    {
+        return $this->attributes['profile_pic'] ?? $this->employee?->profile_pic;
+    }
+
+    /**
+     * Get the therapist's active status (from parent employee).
+     */
+    public function getIsActiveAttribute(): bool
+    {
+        return (bool) $this->employee?->is_active;
+    }
+
+    /**
      * Calculate and get the therapist's age dynamically.
      */
     public function getAgeAttribute(): ?int
     {
-        if (!$this->dob) {
-            return null;
-        }
-
-        return $this->dob->age;
+        return $this->employee?->age;
     }
 
     /**
@@ -99,19 +154,29 @@ class Therapist extends Model
     }
 
     /**
-     * Scope a query to only include active therapists.
+     * Scope a query to only include active therapists (via employee relation).
      */
     public function scopeActive($query)
     {
-        return $query->where('is_active', true);
+        return $query->whereHas('employee', function ($q) {
+            $q->where('is_active', true);
+        });
     }
 
     /**
-     * Get the user account associated with the therapist.
+     * Get the parent employee record.
      */
-    public function user(): BelongsTo
+    public function employee(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Employee::class);
+    }
+
+    /**
+     * Get the user account associated with the therapist through employee.
+     */
+    public function getUserAttribute(): ?User
+    {
+        return $this->employee?->user;
     }
 
     /**

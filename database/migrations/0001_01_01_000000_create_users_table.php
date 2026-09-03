@@ -14,6 +14,7 @@ return new class extends Migration
         // Parent table: users
         Schema::create('users', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_role_id')->default(1)->constrained('user_roles')->restrictOnDelete();
             $table->string('name');
             $table->string('email')->nullable()->unique();
             $table->string('password')->nullable();

@@ -7,6 +7,7 @@ use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -14,22 +15,47 @@ use Illuminate\Support\Carbon;
 
 /**
  * @property int $id
+ * @property int $user_role_id
  * @property string $name
  * @property string|null $email
- * @property Carbon|null $email_verified_at
  * @property string|null $password
+ * @property Carbon|null $email_verified_at
  * @property string|null $remember_token
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ * 
+ * @property-read UserRole $role
  * @property-read Admin|null $admin
  * @property-read Client|null $client
+ * @property-read Employee|null $employee
  */
-#[Fillable(['name', 'email', 'password'])]
+#[Fillable(['user_role_id', 'name', 'email', 'password'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
+
+    /**
+     * Default model attributes.
+     *
+     * @var array<string, mixed>
+     */
+    protected $attributes = [
+        'user_role_id' => 1, // Default to Client role (id: 1)
+    ];
+
+    /**
+     * Bootstrap the model and its traits.
+     */
+    protected static function booted(): void
+    {
+        static::creating(function (User $user) {
+            if (empty($user->user_role_id)) {
+                $user->user_role_id = 1;
+            }
+        });
+    }
 
     /**
      * Get the attributes that should be cast.
@@ -39,9 +65,18 @@ class User extends Authenticatable
     protected function casts(): array
     {
         return [
+            'user_role_id' => 'integer',
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * Get the role associated with the user.
+     */
+    public function role(): BelongsTo
+    {
+        return $this->belongsTo(UserRole::class, 'user_role_id');
     }
 
     /**
@@ -61,11 +96,19 @@ class User extends Authenticatable
     }
 
     /**
-     * Check if the user is an admin.
+     * Get the employee profile associated with the user.
+     */
+    public function employee(): HasOne
+    {
+        return $this->hasOne(Employee::class);
+    }
+
+    /**
+     * Check if the user has an admin role.
      */
     public function isAdmin(): bool
     {
-        return $this->admin !== null;
+        return $this->role?->code === 'admin' || $this->admin !== null;
     }
 
     /**
@@ -85,10 +128,18 @@ class User extends Authenticatable
     }
 
     /**
-     * Check if the user is a client.
+     * Check if the user has an employee role.
+     */
+    public function isEmployee(): bool
+    {
+        return $this->role?->code === 'employee' || $this->employee !== null;
+    }
+
+    /**
+     * Check if the user has a client role.
      */
     public function isClient(): bool
     {
-        return $this->client !== null;
+        return ($this->role?->code === 'client' || $this->role === null) && $this->admin === null && $this->employee === null;
     }
 }

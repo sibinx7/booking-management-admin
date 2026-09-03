@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Therapist;
 use App\Models\TherapistAvailability;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -18,7 +19,7 @@ class TherapistAvailabilityFactory extends Factory
     public function definition(): array
     {
         return [
-            'therapist_id' => null,
+            'therapist_id' => Therapist::factory(),
             'day_of_week' => fake()->numberBetween(0, 6),
             'start_time' => '09:00:00',
             'end_time' => '17:00:00',

@@ -25,7 +25,7 @@ class ServiceFactory extends Factory
             'tagline' => fake()->sentence(),
             'category' => fake()->randomElement(['Couples & Romantic', 'Exotic Massage', 'Holistic Healing', 'Hydrotherapy']),
             'hero_image' => 'images/treatments/default.jpg',
-            'images' => json_encode(['images/treatments/gallery1.jpg', 'images/treatments/gallery2.jpg']),
+            'images' => ['images/treatments/gallery1.jpg', 'images/treatments/gallery2.jpg'],
             'is_new' => fake()->boolean(30),
             'is_unlimited' => true,
             'start' => null,
@@ -39,7 +39,7 @@ class ServiceFactory extends Factory
             'review_count' => fake()->numberBetween(10, 100),
             'overview' => fake()->paragraph(),
             'full_description' => fake()->paragraphs(3, true),
-            'ritual_steps' => json_encode(['Welcome Foot Ritual', 'Therapeutic Treatment', 'Post-Ritual Tea & Relax']),
+            'ritual_steps' => ['Welcome Foot Ritual', 'Therapeutic Treatment', 'Post-Ritual Tea & Relax'],
         ];
     }
 }
