@@ -1,11 +1,21 @@
 <script setup lang="ts">
-import { Head, Link } from '@inertiajs/vue3';
-import { onMounted, onUnmounted, ref } from 'vue';
-import { Button, Card, Heading } from '@/components';
+import { Button, Card } from '@/components';
 import { useAppearance } from '@/composables/useAppearance';
 import { dashboard, login } from '@/routes';
+import { Head } from '@inertiajs/vue3';
+import { onMounted, onUnmounted, ref } from 'vue';
 
 const { appearance, updateAppearance } = useAppearance();
+
+const props = withDefaults(
+    defineProps<{
+        guest_ratings?: number,
+        therapists?: number 
+    }>(), {
+        guest_ratings: 0,
+        therapists: 0
+    }
+)
 
 const toggleDark = () => {
     updateAppearance(appearance.value === 'dark' ? 'light' : 'dark');
@@ -132,7 +142,7 @@ const stats = [
         borderColor: 'rgba(190, 24, 93, 0.35)',
     },
     {
-        value: '12',
+        value: props.therapists,
         label: 'Certified Therapists',
         icon: 'mdi-account-heart',
         lightBg: 'rgba(255, 255, 255, 0.94)',
@@ -142,7 +152,7 @@ const stats = [
         borderColor: 'rgba(217, 119, 6, 0.35)',
     },
     {
-        value: '4.9 ★',
+        value: props.guest_ratings + ' ★',
         label: 'Guest Rating',
         icon: 'mdi-star',
         lightBg: 'rgba(255, 255, 255, 0.94)',
