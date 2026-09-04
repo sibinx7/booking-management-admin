@@ -18,6 +18,7 @@ use Illuminate\Support\Carbon;
  * @property string $category
  * @property string $hero_image
  * @property array|null $images
+ * @property bool $is_active
  * @property bool $is_new
  * @property bool $is_unlimited
  * @property Carbon|null $start
@@ -44,6 +45,7 @@ use Illuminate\Support\Carbon;
     'category',
     'hero_image',
     'images',
+    'is_active',
     'is_new',
     'is_unlimited',
     'start',
@@ -73,6 +75,7 @@ class Service extends Model
     {
         return [
             'images' => 'array',
+            'is_active' => 'boolean',
             'is_new' => 'boolean',
             'is_unlimited' => 'boolean',
             'start' => 'datetime',
@@ -85,6 +88,22 @@ class Service extends Model
             'review_count' => 'integer',
             'ritual_steps' => 'array',
         ];
+    }
+
+    /**
+     * Scope a query to only include active services.
+     */
+    public function scopeActive($query)
+    {
+        return $query->where('is_active', true);
+    }
+
+    /**
+     * Scope a query to only include inactive services.
+     */
+    public function scopeInactive($query)
+    {
+        return $query->where('is_active', false);
     }
 
     /**

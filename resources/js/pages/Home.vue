@@ -10,10 +10,12 @@ const { appearance, updateAppearance } = useAppearance();
 const props = withDefaults(
     defineProps<{
         guest_ratings?: number,
-        therapists?: number 
+        therapists?: number,
+        services?: number        
     }>(), {
         guest_ratings: 0,
-        therapists: 0
+        therapists: 0,
+        services: 0
     }
 )
 
@@ -132,7 +134,7 @@ const highlights = [
 
 const stats = [
     {
-        value: '15+',
+        value: props.services > 10 ? `${props.services} +`: props.services,
         label: 'Signature Therapies',
         icon: 'mdi-spa',
         lightBg: 'rgba(255, 255, 255, 0.94)',

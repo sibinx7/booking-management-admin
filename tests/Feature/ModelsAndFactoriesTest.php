@@ -100,8 +100,15 @@ test('all individual model factories work correctly', function () {
 
     $service = Service::factory()->create();
     expect($service)->toBeInstanceOf(Service::class);
+    expect($service->is_active)->toBeTrue();
     expect($service->images)->toBeArray();
     expect($service->ritual_steps)->toBeArray();
+
+    $inactiveService = Service::factory()->inactive()->create();
+    expect($inactiveService->is_active)->toBeFalse();
+    expect(Service::active()->pluck('id'))->toContain($service->id);
+    expect(Service::active()->pluck('id'))->not->toContain($inactiveService->id);
+    expect(Service::inactive()->pluck('id'))->toContain($inactiveService->id);
 
     expect(ServiceDuration::factory()->create())->toBeInstanceOf(ServiceDuration::class);
     expect(ServiceHighlight::factory()->create())->toBeInstanceOf(ServiceHighlight::class);
@@ -275,7 +282,7 @@ test('model relationships work properly', function () {
     $secEmp = Employee::factory()->therapist()->create(['user_id' => $secEmpUser->id]);
     $secTherapist = Therapist::factory()->create(['employee_id' => $secEmp->id]);
 
-    $service = Service::factory()->create(['name' => 'Couples Volcanic Hot Stone Ritual']);
+    $service = Service::factory()->create(['title' => 'Couples Volcanic Hot Stone Ritual']);
     
     // Couple / Dual Massage with 2 Therapists in Couple Room
     $serviceLog = TherapistServiceLog::create([
@@ -485,7 +492,7 @@ test('TherapistScheduleService calculates full/half day attendance and live mass
     // 2. Therapist marked present half day and currently busy in a 120-minute massage
     $emp2 = Employee::factory()->therapist()->create(['user_id' => User::factory()->create(['user_role_id' => $empRole->id])]);
     $therapist2 = Therapist::factory()->create(['employee_id' => $emp2->id, 'is_online' => true]);
-    $service = Service::factory()->create(['name' => 'Signature Deep Relaxation 120 Min']);
+    $service = Service::factory()->create(['title' => 'Signature Deep Relaxation 120 Min']);
     EmployeeAttendance::create([
         'employee_id' => $emp2->id,
         'therapist_id' => $therapist2->id,

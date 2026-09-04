@@ -38,9 +38,11 @@ class TherapistScheduleService
         $timeStr = $now->format('H:i:s');
 
         // 1. Check Attendance for Today
-        $attendance = EmployeeAttendance::where('therapist_id', $therapist->id)
-            ->orWhere('employee_id', $therapist->employee_id)
-            ->where('date', $todayDate)
+        $attendance = EmployeeAttendance::where(function ($q) use ($therapist) {
+            $q->where('therapist_id', $therapist->id)
+                ->orWhere('employee_id', $therapist->employee_id);
+        })
+            ->whereDate('date', $todayDate)
             ->first();
 
         $isPresentToday = false;
@@ -72,7 +74,7 @@ class TherapistScheduleService
         // 3. Check for Active Service Session In Progress right now
         $activeServiceLog = TherapistServiceLog::with(['service', 'serviceDuration'])
             ->where('therapist_id', $therapist->id)
-            ->where('service_date', $todayDate)
+            ->whereDate('service_date', $todayDate)
             ->where(function ($query) use ($timeStr) {
                 // Status explicitly in_progress, or time currently within start_time and end_time
                 $query->where('status', 'in_progress')
@@ -86,9 +88,9 @@ class TherapistScheduleService
             ->first();
 
         if ($activeServiceLog) {
-            $endTime = $activeServiceLog->end_time ? Carbon::createFromTimeString($activeServiceLog->end_time) : $now->copy()->addMinutes(30);
+            $endTime = $activeServiceLog->end_time ? Carbon::parse($todayDate . ' ' . $activeServiceLog->end_time) : $now->copy()->addMinutes(30);
             $freeAt = $endTime->copy()->addMinutes(self::TURNAROUND_BUFFER_MINUTES);
-            $remainingMinutes = max(0, $now->diffInMinutes($freeAt, false));
+            $remainingMinutes = (int) max(0, $now->diffInMinutes($freeAt, false));
 
             return [
                 'therapist_id' => $therapist->id,

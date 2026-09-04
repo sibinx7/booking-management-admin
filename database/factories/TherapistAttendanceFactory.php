@@ -24,7 +24,7 @@ class TherapistAttendanceFactory extends Factory
             'shift_type' => 'full_day',
             'duty_start_time' => '09:00:00',
             'duty_end_time' => '18:00:00',
-            'allocated_suite' => 'Suite 1 - Lotus Sanctuary',
+            'room_id' => \App\Models\Room::factory(),
             'status' => 'on_duty',
             'max_sessions_allowed' => 6,
             'remarks' => 'Assigned to treatment suite for full day',

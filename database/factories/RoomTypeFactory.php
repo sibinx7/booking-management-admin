@@ -12,8 +12,8 @@ class RoomTypeFactory extends Factory
 {
     public function definition(): array
     {
-        $code = fake()->unique()->randomElement(['single', 'couple', 'vip', 'hydrotherapy_suite', 'honeymoon']);
-        $name = ucwords(str_replace('_', ' ', $code)) . ' Suite';
+        $name = ucwords(fake()->words(2, true)) . ' Suite';
+        $code = fake()->unique()->slug(2);
 
         return [
             'name' => $name,

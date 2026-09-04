@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('category');
             $table->string('hero_image');
             $table->json('images')->nullable();
+            $table->boolean('is_active')->default(true);
             $table->boolean('is_new')->default(false);
             $table->boolean('is_unlimited')->default(true);
             $table->timestamp('start')->nullable();

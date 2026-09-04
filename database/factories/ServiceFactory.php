@@ -26,6 +26,7 @@ class ServiceFactory extends Factory
             'category' => fake()->randomElement(['Couples & Romantic', 'Exotic Massage', 'Holistic Healing', 'Hydrotherapy']),
             'hero_image' => 'images/treatments/default.jpg',
             'images' => ['images/treatments/gallery1.jpg', 'images/treatments/gallery2.jpg'],
+            'is_active' => true,
             'is_new' => fake()->boolean(30),
             'is_unlimited' => true,
             'start' => null,
@@ -41,5 +42,19 @@ class ServiceFactory extends Factory
             'full_description' => fake()->paragraphs(3, true),
             'ritual_steps' => ['Welcome Foot Ritual', 'Therapeutic Treatment', 'Post-Ritual Tea & Relax'],
         ];
+    }
+
+    public function active(): static
+    {
+        return $this->state(fn () => [
+            'is_active' => true,
+        ]);
+    }
+
+    public function inactive(): static
+    {
+        return $this->state(fn () => [
+            'is_active' => false,
+        ]);
     }
 }

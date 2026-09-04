@@ -160,6 +160,7 @@ class DatabaseSeeder extends Seeder
             'category' => 'Exotic Massage',
             'hero_image' => 'images/treatments/volcanic-stone.jpg',
             'images' => ['images/treatments/gallery1.jpg', 'images/treatments/gallery2.jpg'],
+            'is_active' => true,
             'is_new' => true,
             'is_unlimited' => true,
             'start' => now(),
@@ -332,6 +333,13 @@ class DatabaseSeeder extends Seeder
             'bank_ifsc' => 'HDFC0001234',
             'upi_id' => 'pooja@okhdfcbank',
             'notes' => 'Senior front desk receptionist and guest coordinator.',
+        ]);
+        Receptionist::create([
+            'employee_id' => $receptionist->id,
+            'counter_number' => 'Front Desk Counter 1',
+            'shift_preference' => 'general',
+            'desk_phone' => '+91 98765 43210',
+            'is_active' => true,
         ]);
 
         // Cleaner (Temporary / Contract - Grade C)
@@ -554,9 +562,9 @@ class DatabaseSeeder extends Seeder
             'new_salary' => 24000.00,
             'increment_percentage' => 20.00,
             'effective_date' => '2025-07-01',
-            'commission_rate' => 15.00,
-            'rating' => 4.95,
-            'review_count' => 156,
+            'reason' => 'Annual Performance Appraisal & Customer Delight Bonus',
+            'approved_by' => $spaAdminUser->id,
+            'remarks' => 'High booking efficiency and stellar front-desk reviews.',
         ]);
 
         // 18. Link Therapists to Skills, Languages, Specialities & Services
@@ -598,7 +606,7 @@ class DatabaseSeeder extends Seeder
         }
 
         // 20. Seed Daily Attendance for Employees & Therapists (August 2026)
-        $allActiveStaff = [$anjaliEmp, $rahulEmp, $mayaEmp, $receptionistEmp, $cleaner, $laundry];
+        $allActiveStaff = [$anjaliEmp, $rahulEmp, $mayaEmp, $receptionist, $cleaner, $laundry];
         foreach ($allActiveStaff as $emp) {
             for ($day = 1; $day <= 26; $day++) {
                 $dateStr = sprintf('2026-08-%02d', $day);
@@ -1207,7 +1215,7 @@ class DatabaseSeeder extends Seeder
 
         // UPI transfer for Receptionist (Pooja)
         SalaryPayment::create([
-            'employee_id' => $receptionistEmp->id,
+            'employee_id' => $receptionist->id,
             'payment_type_id' => $paymentTypes['upi']->id,
             'payslip_number' => 'PAY-2026-07-002',
             'month' => 7,
