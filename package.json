@@ -41,10 +41,12 @@
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",
         "laravel-vite-plugin": "^3.0.0",
+        "pinia": "^4.0.3",
+        "vee-validate": "^4.15.1",
         "vue": "^3.5.13",
         "vue-sonner": "^2.0.0",
         "vuetify": "^4.2.0",
-        "pinia": "^4.0.3"
+        "yup": "^1.7.1"
     },
     "optionalDependencies": {
         "@laravel/multiplex": "^0.4.1",

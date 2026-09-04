@@ -11,11 +11,13 @@ const props = withDefaults(
     defineProps<{
         guest_ratings?: number,
         therapists?: number,
-        services?: number        
+        services?: number,
+        session_completed?: number        
     }>(), {
         guest_ratings: 0,
         therapists: 0,
-        services: 0
+        services: 0,
+        session_completed: 0
     }
 )
 
@@ -164,7 +166,7 @@ const stats = [
         borderColor: 'rgba(225, 29, 72, 0.35)',
     },
     {
-        value: '9k+',
+        value:  props.session_completed > 1000 ? `${props.session_completed / 1000} k+`: props.session_completed ?? 1,
         label: 'Sessions Done',
         icon: 'mdi-check-decagram',
         lightBg: 'rgba(255, 255, 255, 0.94)',
